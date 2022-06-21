@@ -84,7 +84,6 @@ btnLogin.addEventListener('click', function (e) {
 	currentAccount = accounts.find(
 		acc => acc.userName === inputLoginUsername.value
 	);
-	console.log(currentAccount);
 
 	if (currentAccount && currentAccount?.pin === Number(inputLoginPin.value)) {
 		labelWelcome.textContent = `Welcome back, ${
@@ -107,9 +106,9 @@ btnTransfer.addEventListener('click', function (e) {
 	const transferAmount = +inputTransferAmount.value;
 	const receiver = accounts.find(
 		acc => acc.userName === inputTransferTo.value.toLowerCase()
-  );
-  inputTransferTo.value = inputTransferAmount.value = '';
-  inputTransferAmount.blur();
+	);
+	inputTransferTo.value = inputTransferAmount.value = '';
+	inputTransferAmount.blur();
 
 	if (
 		receiver &&
@@ -119,11 +118,26 @@ btnTransfer.addEventListener('click', function (e) {
 	) {
 		currentAccount.movements.push(-transferAmount);
 		receiver.movements.push(transferAmount);
-    
-    //Display UI
-    UIDisplay(currentAccount);
+
+		//Display UI
+		UIDisplay(currentAccount);
 	}
-  
+});
+
+//// Implementing Account Closure
+btnClose.addEventListener('click', function (e) {
+	e.preventDefault();
+
+	if (
+		inputCloseUsername?.value === currentAccount.userName &&
+		Number(inputClosePin.value) === currentAccount.pin
+  ) {
+    const index = accounts.findIndex(acc => acc.userName === inputCloseUsername.value);
+    // Delete account from the accounts array
+    accounts.splice(index, 1);
+    containerApp.style.opacity = 0;
+  }
+  inputClosePin.value = inputCloseUsername.value = '';
 });
 
 /////////////////////////////////////////////////
