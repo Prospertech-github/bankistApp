@@ -64,18 +64,6 @@ const inputClosePin = document.querySelector('.form__input--pin');
 // /////////////////////////////////////////////////
 // /////////////////////////////////////////////////
 
-//Calculating Usernames for Various accounts
-const createUsername = function (accs) {
-	accs.forEach(function (acc) {
-		acc.userName = acc.owner
-			.toLowerCase()
-			.split(' ')
-			.map(name => name[0])
-			.join('');
-	});
-};
-createUsername(accounts);
-
 //Implementing Login and Display Features
 let currentAccount;
 
@@ -131,16 +119,51 @@ btnClose.addEventListener('click', function (e) {
 	if (
 		inputCloseUsername?.value === currentAccount.userName &&
 		Number(inputClosePin.value) === currentAccount.pin
+	) {
+		const index = accounts.findIndex(
+			acc => acc.userName === inputCloseUsername.value
+		);
+		// Delete account from the accounts array
+		accounts.splice(index, 1);
+		containerApp.style.opacity = 0;
+	}
+	inputClosePin.value = inputCloseUsername.value = '';
+});
+
+//Implementing Loan Request
+btnLoan.addEventListener('click', function (e) {
+	e.preventDefault();
+	const amount = Number(inputLoanAmount.value);
+
+	if (
+		amount > 0 &&
+		currentAccount.movements.some(mov => mov >= amount * 0.1)
   ) {
-    const index = accounts.findIndex(acc => acc.userName === inputCloseUsername.value);
-    // Delete account from the accounts array
-    accounts.splice(index, 1);
-    containerApp.style.opacity = 0;
+    currentAccount.movements.push(amount);
+
+    //Display UI
+    UIDisplay(currentAccount);
   }
-  inputClosePin.value = inputCloseUsername.value = '';
+  
+  inputLoanAmount.value = '';
 });
 
 /////////////////////////////////////////////////
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////
+
+//Calculating Usernames for Various accounts
+const createUsername = function (accs) {
+	accs.forEach(function (acc) {
+		acc.userName = acc.owner
+			.toLowerCase()
+			.split(' ')
+			.map(name => name[0])
+			.join('');
+	});
+};
+createUsername(accounts);
+
 // Display Balance Summary Function
 const calcDisplaySummary = function (acc) {
 	const incomes = acc.movements
